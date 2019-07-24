@@ -1,6 +1,6 @@
-#Dataset from Kaggle 
+# Dataset from Kaggle 
 
-##Scope:
+## Scope:
 Fraud risk is everywhere, but for companies that advertise online, click fraud can happen at an 
 overwhelming volume, resulting in misleading click data and wasted money. Ad channels can drive 
 up costs by simply clicking on the ad at a large scale. With over 1 billion smart mobile devices 
@@ -14,23 +14,23 @@ journey of a user’s click across their portfolio, and flag IP addresses who pr
 clicks, but never end up installing apps. With this information, they've built an IP blacklist 
 and device blacklist.
 
-##Methodology:
+## Methodology:
 * Download Data from Kaggle
 * Drop into Amazon RDS instance
 * Feature Engineer  
 * Goal - likelyhood an IP should be banned
 
-###Potential additional step:
+### Potential additional step:
 * predict clicks on a the most granular basis.
 
-##Data Sources:
+## Data Sources:
 Kaggle TalkingData (Dataset Link)[https://www.kaggle.com/c/talkingdata-adtracking-fraud-detection/overview]
 
-##Target:
+## Target:
 MVP: Prediction of 
 Goal: Integrate outside data sources to add further insight to values
 
-##Features:
+## Features:
 * ip: ip address of click. (encoded)
 * app: app id for marketing. (encoded)
 * device: device type id of user mobile phone (encoded)
@@ -38,7 +38,7 @@ Goal: Integrate outside data sources to add further insight to values
 * channel: channel id of mobile ad publisher (encoded)
 * click_time: timestamp of click (UTC)
 
-##Target:
+## Target:
 * attributed_time: if user download the app for after clicking an ad, this is the time of the app download (UTC)
 * is_attributed: the target that is to be predicted, indicating the app was downloaded (0 or 1)
 
