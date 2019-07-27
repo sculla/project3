@@ -47,4 +47,51 @@ Things to consider:
 There are 184mm rows and only 456,846 app downloads. this is like picking very small needles out of a very 
 large hay stack. Need to find a way to make this scalable by getting random samples with the same proportion
 of positives ~.24%.
- 
+
+
+#MVP:
+Sampled 100,000 clicks from 150 unique ip addresses out of a total of
+184,903,890 clicks from the original set. Looking to add more points to the train/test set
+to improve f1. After which I would like to work on moving to a SVM
+## Color commentary:
+So far it looks as if MultinominalNB is leading the pack with an f1 score of .24
+
+```
+Performing Train & Tests...
+
+Working on Baseline Dummy Classifier
+
+                  precision    recall  f1-score   support
+               0       1.00      1.00      1.00     49923
+               1       0.00      0.00      0.00        77
+        accuracy                           1.00     50000
+       macro avg       0.50      0.50      0.50     50000
+    weighted avg       1.00      1.00      1.00     50000
+
+Working on Gaussian Naïve Bayes
+
+                  precision    recall  f1-score   support
+               0       0.64      1.00      0.78     32114
+               1       0.66      0.00      0.01     17886
+        accuracy                           0.64     50000
+       macro avg       0.65      0.50      0.39     50000
+    weighted avg       0.65      0.64      0.50     50000
+
+Working on Bernoulli Naïve Bayes
+
+                  precision    recall  f1-score   support
+               0       1.00      1.00      1.00     49739
+               1       0.44      0.15      0.22       261
+        accuracy                           0.99     50000
+       macro avg       0.72      0.57      0.61     50000
+    weighted avg       0.99      0.99      0.99     50000
+
+Working on Multinomial Naïve Bayes
+
+                  precision    recall  f1-score   support
+               0       0.99      1.00      1.00     49688
+               1       0.56      0.16      0.24       312
+        accuracy                           0.99     50000
+       macro avg       0.78      0.58      0.62     50000
+    weighted avg       0.99      0.99      0.99     50000
+```
