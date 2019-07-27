@@ -120,4 +120,3 @@ if __name__ == '__main__':
     new_sample_table(cursor, name)
     ip_sample(cursor, name)
     main(cursor, name)
-['ip','app','device,os','channel','click_time','attributed_time','is_attributed']
