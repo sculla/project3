@@ -49,7 +49,7 @@ large hay stack. Need to find a way to make this scalable by getting random samp
 of positives ~.24%.
 
 
-#MVP:
+# MVP:
 Sampled 100,000 clicks from 150 unique ip addresses out of a total of
 184,903,890 clicks from the original set. Looking to add more points to the train/test set
 to improve f1. After which I would like to work on moving to a SVM
