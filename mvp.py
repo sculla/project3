@@ -128,13 +128,13 @@ def feature_eng(cursor):
 if __name__ == '__main__':
 
 
-
+    mm_row = 10
     tab = 'project3.phone_data'
     cursor = local_cur()
     lap_time = arrow.now()
     log(f"Time: {(arrow.now() - lap_time).seconds/60} minutes.")
-
-    cursor.execute(f'SELECT * FROM {tab} limit 10'
+    log(f'Initializing test on Pipeline with {mm_row}mm rows.')
+    cursor.execute(f'SELECT * FROM {tab} limit {mm_row}'
                    f'000000;')
     table = cursor.fetchall()
     log('Received from PSQL server')

@@ -133,3 +133,53 @@ Received from PSQL server
 Time: 0.31666666666666665 minutes.
 In DataFrame
 Time: 0.5833333333333334 minutes.
+Filled NA
+Time: 1.1833333333333333 minutes.
+Got Dummies
+Time: 14.966666666666667 minutes.
+Sorted
+Time: 17.683333333333334 minutes.
+X, y split
+Time: 19.4 minutes.
+Train/Test Split
+Time: 29.283333333333335 minutes.
+Performing Train & Tests...
+Time: 29.283333333333335 minutes.
+
+Working on Baseline Dummy Classifier
+Time: 29.283333333333335 minutes.
+Starting train Baseline Dummy Classifier
+Time: 29.283333333333335 minutes.
+Starting Predict Baseline Dummy Classifier
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00   4985999
+           1       0.00      0.00      0.00     14001
+
+    accuracy                           0.99   5000000
+   macro avg       0.50      0.50      0.50   5000000
+weighted avg       0.99      0.99      0.99   5000000
+
+Time: 29.4 minutes.
+End
+
+Working on Pass: Gaussian Naïve Bayes
+Time: 29.4 minutes.
+Starting train Pass: Gaussian Naïve Bayes
+Time: 29.4 minutes.
+Starting Predict Pass: Gaussian Naïve Bayes
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00   4985878
+           1       0.00      0.00      0.00     14122
+
+    accuracy                           0.99   5000000
+   macro avg       0.50      0.50      0.50   5000000
+weighted avg       0.99      0.99      0.99   5000000
+
+Time: 29.516666666666666 minutes.
+End
+
+Working on Bernoulli Naïve Bayes
+Time: 29.516666666666666 minutes.
+Starting train Bernoulli Naïve Bayes

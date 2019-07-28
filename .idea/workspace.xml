@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="27d1bb44-947b-45cf-8c8b-fb52c778185e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mvp.py" beforeDir="false" afterPath="$PROJECT_DIR$/mvp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/why_is_this_taking_so_fucking_long.log" beforeDir="false" afterPath="$PROJECT_DIR$/why_is_this_taking_so_fucking_long.log" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -55,8 +55,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/mvp.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="245">
-              <caret line="139" column="36" lean-forward="true" selection-start-line="139" selection-start-column="36" selection-end-line="139" selection-end-column="36" />
+            <state relative-caret-position="237">
+              <caret line="26" selection-start-line="26" selection-end-line="30" selection-end-column="13" />
               <folding>
                 <element signature="e#224#243#0" expanded="true" />
               </folding>
@@ -86,12 +86,18 @@
       <find>name</find>
       <find>cursorect</find>
       <find>conn</find>
+      <find>seconds</find>
+      <find>minutes</find>
+      <find>minute</find>
     </findStrings>
     <replaceStrings>
       <replace>f.write</replace>
       <replace>log</replace>
       <replace>cursor</replace>
       <replace>conn</replace>
+      <replace>minutes</replace>
+      <replace>minute</replace>
+      <replace>seconds</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -106,9 +112,10 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" fullScreen="true">
+  <component name="ProjectFrameBounds" extendedState="1">
+    <option name="y" value="23" />
     <option name="width" value="1440" />
-    <option name="height" value="900" />
+    <option name="height" value="851" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -227,16 +234,15 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1564274039305</updated>
-      <workItem from="1564274043009" duration="2863000" />
+      <workItem from="1564274043009" duration="4763000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="10678000" />
+    <option name="totallyTimeSpent" value="12578000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1440" height="900" extended-state="0" />
-    <editor active="true" />
+    <frame x="0" y="23" width="1440" height="851" extended-state="1" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14091559" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -255,7 +261,7 @@
       <window_info anchor="bottom" id="Database Changes" order="11" show_stripe_button="false" />
       <window_info anchor="bottom" id="Terminal" order="12" weight="0.23614457" />
       <window_info anchor="bottom" id="Event Log" order="13" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Python Console" order="14" visible="true" weight="0.38433734" />
+      <window_info active="true" anchor="bottom" id="Python Console" order="14" visible="true" weight="0.42028984" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -310,8 +316,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/mvp.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="245">
-          <caret line="139" column="36" lean-forward="true" selection-start-line="139" selection-start-column="36" selection-end-line="139" selection-end-column="36" />
+        <state relative-caret-position="237">
+          <caret line="26" selection-start-line="26" selection-end-line="30" selection-end-column="13" />
           <folding>
             <element signature="e#224#243#0" expanded="true" />
           </folding>
