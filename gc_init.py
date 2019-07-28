@@ -1,15 +1,23 @@
 from sqlalchemy import create_engine
 import dotenv
-
+from psycopg2 import connect
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+from psycopg2 import ProgrammingError
 
 n_rows = 277396.0 #Unique IP
 sample_size = 150
+
+def log(message):
+    f = open('aws.log', 'a')
+    f.write(message+'\n')
+    print(message)
+    f.close()
+
 def get_cursor():
 
     awsqlKey = dotenv.get_key('.env', 'awsqlKey')
 
-    from psycopg2 import connect
-    from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+
 
     params = {
         'host': 'project3.czq1askywdkq.us-west-2.rds.amazonaws.com',
@@ -32,17 +40,18 @@ def ip_sample(cursor, name):
 
 #SELECT * FROM ts_test TABLESAMPLE SYSTEM (0.001) REPEATABLE (200);
 
-    cursor.execute('select distinct ip from project3.phone_data tablesample bernoulli(150/277396.0) repeatable (42);')
+    cursor.execute('select distinct ip from project3.phone_data tablesample bernoulli((150/2)/277396.0) repeatable (42);')
                    # f'(({sample_size}) / {n_rows}) LIMIT {sample_size};\n')
 
     ip_addr = cursor.fetchall()
     for ip in ip_addr[:1]:
-        print(ip[0], 'starting')
+        log(f'{ip[0]} starting.')
+
         cursor.execute(f'INSERT INTO project3.phone_data{name} '
                        f'SELECT * FROM project3.phone_data '
                        f'WHERE ip = {ip[0]};\n'
                        )
-        print(ip[0], 'done')
+        log(f'{ip[0]} done.')
 
 
 def new_sample_table(cursor,name):
@@ -78,29 +87,30 @@ def main(cursor, name):
         unique_values = cursor.fetchall()
 
         for value in unique_values:
+            if cursor.statusmessage == '':
+                    cursor = get_cursor()
+
+
             val = value[0]
             try:
 
                 cursor.execute(f'ALTER TABLE project3.{tab} '
                                f'ADD COLUMN {column}_{val} INT;\n')
+            except ProgrammingError:  # column already exists
+                log(f'{column}_{val} already exists')
+                continue
 
-                # f.write(f'ALTER TABLE project3.{tab} '
-                #                f'ADD COLUMN {column}_{val} INT;\n')
+            cursor.execute(f'UPDATE project3.{tab} '
+                           f'SET {column}_{val} = 1 '
+                           f'WHERE {column} = {val};\n')
+
+            cursor.execute(f'UPDATE project3.{tab} '
+                           f'SET {column}_{val} = 0 '
+                           f'WHERE {column} <> {val};\n')
+
+            log(f'{column}_{val} completed.')
 
 
-                cursor.execute(f'UPDATE project3.{tab} '
-                               f'SET {column}_{val} = 1 '
-                               f'WHERE {column} = {val};\n')
-
-                cursor.execute(f'UPDATE project3.{tab} '
-                               f'SET {column}_{val} = 0 '
-                               f'WHERE {column} <> {val};\n')
-
-                # f.write(f'UPDATE project3.{tab} '
-                #                f'SET {column}_{val} = 1 '
-                #                f'WHERE {column} = {val};\n')
-            except: #TODO column already exists
-                pass
     cursor.close()
     f.close()
 

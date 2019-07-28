@@ -2,4 +2,5 @@ data/
 .idea
 .env
 .idea/*
-.idea/workspace.xml
+.idea/workspace.xml__pycache__*
+__pycache__/
