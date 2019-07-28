@@ -30,9 +30,10 @@ def get_cursor():
 
 def ip_sample(cursor, name):
 
+#SELECT * FROM ts_test TABLESAMPLE SYSTEM (0.001) REPEATABLE (200);
 
-    cursor.execute(f'SELECT DISTINCT ip FROM project3.phone_data TABLESAMPLE SYSTEM '
-                   f'(({sample_size}) / {n_rows}) LIMIT {sample_size};\n')
+    cursor.execute('select distinct ip from project3.phone_data tablesample bernoulli(150/277396.0) repeatable (42);')
+                   # f'(({sample_size}) / {n_rows}) LIMIT {sample_size};\n')
 
     ip_addr = cursor.fetchall()
     for ip in ip_addr[:1]:
@@ -120,4 +121,4 @@ if __name__ == '__main__':
     #new_sample_table(cursor, name)
     #ip_sample(cursor, name)
     main(cursor, name)
-['ip','app','device,os','channel','click_time','attributed_time','is_attributed']
+    print(['ip','app','device,os','channel','click_time','attributed_time','is_attributed'])

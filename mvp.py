@@ -148,11 +148,11 @@ if __name__ == '__main__':
     log(f"Start Time: {(arrow.now() - lap_time).seconds//60}:{(arrow.now() - lap_time).seconds%60} minutes.")
     df = pd.get_dummies(df, columns=['app', 'device', 'os', 'channel'])
     log('Got Dummies')
+    # log(f"Start Time: {(arrow.now() - lap_time).seconds//60}:{(arrow.now() - lap_time).seconds%60} minutes.")
+    # df.sort_values(by='index', inplace=True)
+    # log('Sorted')
     log(f"Start Time: {(arrow.now() - lap_time).seconds//60}:{(arrow.now() - lap_time).seconds%60} minutes.")
-    df.sort_values(by='index', inplace=True)
-    log('Sorted')
-    log(f"Start Time: {(arrow.now() - lap_time).seconds//60}:{(arrow.now() - lap_time).seconds%60} minutes.")
-    X, y = df.drop(columns=['index', 'ip', 'click_time', 'attributed_time', 'is_attributed'], axis=1), df['is_attributed']
+    X, y = df.drop(columns=['is_attributed'], axis=1), df['is_attributed']
     log('X, y split')
     log(f"Start Time: {(arrow.now() - lap_time).seconds//60}:{(arrow.now() - lap_time).seconds%60} minutes.")
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5,
@@ -174,18 +174,18 @@ if __name__ == '__main__':
     ])
 
     pipes = [pipe_baseline, pipe_gnb, pipe_bnb, pipe_mnb]
-    pipe_dict = {0:'Baseline Dummy Classifier', 1:'Pass: Gaussian Na\u00EFve Bayes',
+    pipe_dict = {0:'Baseline Dummy Classifier', 1:'Pass is dummy: Gaussian Na\u00EFve Bayes',
                  2: 'Bernoulli Na\u00EFve Bayes', 3: 'Multinomial Na\u00EFve Bayes'}
     log('Performing Train & Tests...')
-    log(f"Start Time: {(arrow.now() - lap_time).seconds/60} minutes.")
+    log(f"Start Time: {(arrow.now() - lap_time).seconds//60}:{(arrow.now() - lap_time).seconds%60} minutes.")
     for idx, pip in enumerate(pipes):
         log(f'\nWorking on {pipe_dict[idx]}')
-        log(f"Start Time: {(arrow.now() - lap_time).seconds/60} minutes.")
+        log(f"Start Time: {(arrow.now() - lap_time).seconds//60}:{(arrow.now() - lap_time).seconds%60} minutes.")
         log(f'Starting train {pipe_dict[idx]}')
         pip.fit(X_train, y_train)
-        log(f"Start Time: {(arrow.now() - lap_time).seconds/60} minutes.")
+        log(f"Start Time: {(arrow.now() - lap_time).seconds//60}:{(arrow.now() - lap_time).seconds%60} minutes.")
         log(f'Starting Predict {pipe_dict[idx]}')
         log(metrics.classification_report(pip.predict(X_test), y_test))
-        log(f"Start Time: {(arrow.now() - lap_time).seconds/60} minutes.")
+        log(f"Start Time: {(arrow.now() - lap_time).seconds//60}:{(arrow.now() - lap_time).seconds%60} minutes.")
         log('End')
 

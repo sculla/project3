@@ -190,3 +190,23 @@ Starting 10mm rows:
 Received from PSQL server
 Start Time: 7:8 minutes.
 >>>>>>> Stashed changes
+Start Time: 0:0 minutes.
+Starting 10mm rows:
+Received from PSQL server
+Start Time: 15:13 minutes.
+In DataFrame
+Start Time: 15:24 minutes.
+Filled NA
+Start Time: 15:24 minutes.
+Got Dummies
+Start Time: 19:5 minutes.
+Start Time: 0:0 minutes.
+Starting 10mm rows:
+Received from PSQL server
+Start Time: 8:16 minutes.
+In DataFrame
+Start Time: 8:27 minutes.
+Filled NA
+Start Time: 8:27 minutes.
+Start Time: 0:0 minutes.
+Starting 10mm rows:
