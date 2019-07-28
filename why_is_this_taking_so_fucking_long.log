@@ -1,0 +1,135 @@
+Time: 0 seconds.Received from PSQL serverTime: 494 seconds.In DataFrameTime: 496 seconds.Filled NATime: 500 seconds.Time: 0 seconds.
+Received from PSQL server
+Time: 4 seconds.
+In DataFrame
+Time: 7 seconds.
+Filled NA
+Time: 14 seconds.
+Got Dummies
+Time: 35 seconds.
+Sorted
+Time: 42 seconds.
+X, y split
+Time: 44 seconds.
+Train/Test Split
+Time: 56 seconds.
+Performing Train & Tests...
+Time: 56 seconds.
+
+Working on Baseline Dummy Classifier
+Time: 56 seconds.
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00    997415
+           1       0.00      0.00      0.00      2585
+
+    accuracy                           0.99   1000000
+   macro avg       0.50      0.50      0.50   1000000
+weighted avg       0.99      0.99      0.99   1000000
+
+
+Working on Gaussian Naïve Bayes
+Time: 57 seconds.
+              precision    recall  f1-score   support
+
+           0       0.12      1.00      0.22    121778
+           1       0.97      0.00      0.01    878222
+
+    accuracy                           0.12   1000000
+   macro avg       0.54      0.50      0.11   1000000
+weighted avg       0.86      0.12      0.03   1000000
+
+
+Working on Bernoulli Naïve Bayes
+Time: 148 seconds.
+              precision    recall  f1-score   support
+
+           0       0.99      1.00      1.00    989799
+           1       0.73      0.19      0.30     10201
+
+    accuracy                           0.99   1000000
+   macro avg       0.86      0.59      0.65   1000000
+weighted avg       0.99      0.99      0.99   1000000
+
+
+Working on Multinomial Naïve Bayes
+Time: 259 seconds.
+              precision    recall  f1-score   support
+
+           0       0.99      1.00      1.00    989785
+           1       0.74      0.19      0.30     10215
+
+    accuracy                           0.99   1000000
+   macro avg       0.87      0.60      0.65   1000000
+weighted avg       0.99      0.99      0.99   1000000
+
+Time: 0 seconds.
+Received from PSQL server
+Time: 9 seconds.
+In DataFrame
+Time: 17 seconds.
+Filled NA
+Time: 34 seconds.
+Got Dummies
+Time: 115 seconds.
+Sorted
+Time: 169 seconds.
+X, y split
+Time: 194 seconds.
+Train/Test Split
+Time: 266 seconds.
+Performing Train & Tests...
+Time: 267 seconds.
+
+Working on Baseline Dummy Classifier
+Time: 267 seconds.
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00   2492894
+           1       0.00      0.00      0.00      7106
+
+    accuracy                           0.99   2500000
+   macro avg       0.50      0.50      0.50   2500000
+weighted avg       0.99      0.99      0.99   2500000
+
+
+Working on Gaussian Naïve Bayes
+Time: 270 seconds.
+              precision    recall  f1-score   support
+
+           0       0.10      1.00      0.19    257524
+           1       0.98      0.00      0.01   2242476
+
+    accuracy                           0.11   2500000
+   macro avg       0.54      0.50      0.10   2500000
+weighted avg       0.89      0.11      0.02   2500000
+
+
+Working on Bernoulli Naïve Bayes
+Time: 3779 seconds.
+              precision    recall  f1-score   support
+
+           0       0.99      1.00      0.99   2469327
+           1       0.79      0.18      0.30     30673
+
+    accuracy                           0.99   2500000
+   macro avg       0.89      0.59      0.65   2500000
+weighted avg       0.99      0.99      0.99   2500000
+
+
+Working on Multinomial Naïve Bayes
+Time: 4780 seconds.
+              precision    recall  f1-score   support
+
+           0       0.99      1.00      0.99   2469132
+           1       0.79      0.18      0.30     30868
+
+    accuracy                           0.99   2500000
+   macro avg       0.89      0.59      0.65   2500000
+weighted avg       0.99      0.99      0.99   2500000
+
+Time: 0.0 minutes.
+Received from PSQL server
+Time: 0.31666666666666665 minutes.
+In DataFrame
+Time: 0.5833333333333334 minutes.

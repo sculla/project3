@@ -20,10 +20,10 @@ def get_cursor():
 
     connection = connect(**params, dbname='sculla')
     connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-    #connection_string = 'postgresql://localhost:5432/sculla'
-    #engine = create_engine(connection_string, echo=True, isolation_level='AUTOCOMMIT')
-    # conn = engine.connect()
-    # cursor = conn.connection.cursor()
+    #connion_string = 'postgresql://localhost:5432/sculla'
+    #engine = create_engine(connion_string, echo=True, isolation_level='AUTOCOMMIT')
+    # cursor = engine.conn()
+    # cursor = cursor.connion.cursor()
     cursor = connection.cursor()
     cursor.execute('SET search_path TO project3;') # for console afterwards
     return cursor
@@ -37,7 +37,7 @@ def ip_sample(cursor, name):
     ip_addr = cursor.fetchall()
     for ip in ip_addr[:1]:
         print(ip[0], 'starting')
-        conn.execute(f'INSERT INTO project3.phone_data_{name} '
+        cursor.execute(f'INSERT INTO project3.phone_data{name} '
                        f'SELECT * FROM project3.phone_data '
                        f'WHERE ip = {ip[0]};\n'
                        )
@@ -49,7 +49,7 @@ def new_sample_table(cursor,name):
     # cursor.execute('drop table project3.phone_data_sample2;')
 
     cursor.execute(
-        f'CREATE TABLE project3.phone_data_{name} ('
+        f'CREATE TABLE project3.phone_data{name} ('
             f'index integer NOT NULL,'
             f'app integer NOT NULL,'
             f'ip integer NOT NULL,'
@@ -62,7 +62,7 @@ def new_sample_table(cursor,name):
             f');\n'
     )
     cursor.execute(
-        f'alter table project3.phone_data_{name} '
+        f'alter table project3.phone_data{name} '
         f'add constraint phone_data_{name}_pk '
         f'primary key (index);\n')
 
@@ -70,7 +70,7 @@ def main(cursor, name):
     columns = ['app','device','os','channel']
 
 
-    tab = f'phone_data_{name}'
+    tab = f'phone_data{name}'
 
     for column in columns:
         cursor.execute(f'SELECT DISTINCT {column} FROM project3.{tab}')
@@ -80,18 +80,18 @@ def main(cursor, name):
             val = value[0]
             try:
 
-                conn.execute(f'ALTER TABLE project3.{tab} '
+                cursor.execute(f'ALTER TABLE project3.{tab} '
                                f'ADD COLUMN {column}_{val} INT;\n')
 
                 # f.write(f'ALTER TABLE project3.{tab} '
                 #                f'ADD COLUMN {column}_{val} INT;\n')
 
 
-                conn.execute(f'UPDATE project3.{tab} '
+                cursor.execute(f'UPDATE project3.{tab} '
                                f'SET {column}_{val} = 1 '
                                f'WHERE {column} = {val};\n')
 
-                conn.execute(f'UPDATE project3.{tab} '
+                cursor.execute(f'UPDATE project3.{tab} '
                                f'SET {column}_{val} = 0 '
                                f'WHERE {column} <> {val};\n')
 
@@ -100,7 +100,7 @@ def main(cursor, name):
                 #                f'WHERE {column} = {val};\n')
             except: #TODO column already exists
                 pass
-    conn.close()
+    cursor.close()
     f.close()
 
 
@@ -116,8 +116,8 @@ def main(cursor, name):
 
 if __name__ == '__main__':
     cursor = get_cursor()
-    name = 'test'
-    new_sample_table(cursor, name)
-    ip_sample(cursor, name)
+    name = ''
+    #new_sample_table(cursor, name)
+    #ip_sample(cursor, name)
     main(cursor, name)
 ['ip','app','device,os','channel','click_time','attributed_time','is_attributed']
