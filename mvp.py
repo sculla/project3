@@ -130,36 +130,35 @@ if __name__ == '__main__':
 
     mm_row = 10
     tab = 'project3.phone_data'
-    cursor = local_cur()
+    cursor = get_cursor()
     lap_time = arrow.now()
-    log(f"Time: {(arrow.now() - lap_time).seconds/60} minutes.")
-    log(f'Initializing test on Pipeline with {mm_row}mm rows.')
-    cursor.execute(f'SELECT * FROM {tab} limit {mm_row}'
+    log(f"Start Time: {(arrow.now() - lap_time).seconds//60}:{(arrow.now() - lap_time).seconds%60} minutes.")
+    log(f'Starting {mm_row}mm rows:')
+    cursor.execute(f'SELECT ip, app, device, os, channel, is_attributed FROM {tab} limit {mm_row}'
                    f'000000;')
     table = cursor.fetchall()
     log('Received from PSQL server')
-    log(f"Time: {(arrow.now() - lap_time).seconds/60} minutes.")
-    df = pd.DataFrame(table, columns=['index', 'app', 'ip', 'device', 'os',
-                                      'channel', 'click_time', 'attributed_time',
-                                      'is_attributed'])
+    log(f"Start Time: {(arrow.now() - lap_time).seconds//60}:{(arrow.now() - lap_time).seconds%60} minutes.")
+    df = pd.DataFrame(table, columns=['ip', 'app', 'device', 'os',
+                                      'channel', 'is_attributed'])
     log('In DataFrame')
-    log(f"Time: {(arrow.now() - lap_time).seconds/60} minutes.")
+    log(f"Start Time: {(arrow.now() - lap_time).seconds//60}:{(arrow.now() - lap_time).seconds%60} minutes.")
     df.fillna(0, inplace=True)
     log('Filled NA')
-    log(f"Time: {(arrow.now() - lap_time).seconds/60} minutes.")
+    log(f"Start Time: {(arrow.now() - lap_time).seconds//60}:{(arrow.now() - lap_time).seconds%60} minutes.")
     df = pd.get_dummies(df, columns=['app', 'device', 'os', 'channel'])
     log('Got Dummies')
-    log(f"Time: {(arrow.now() - lap_time).seconds/60} minutes.")
+    log(f"Start Time: {(arrow.now() - lap_time).seconds//60}:{(arrow.now() - lap_time).seconds%60} minutes.")
     df.sort_values(by='index', inplace=True)
     log('Sorted')
-    log(f"Time: {(arrow.now() - lap_time).seconds/60} minutes.")
+    log(f"Start Time: {(arrow.now() - lap_time).seconds//60}:{(arrow.now() - lap_time).seconds%60} minutes.")
     X, y = df.drop(columns=['index', 'ip', 'click_time', 'attributed_time', 'is_attributed'], axis=1), df['is_attributed']
     log('X, y split')
-    log(f"Time: {(arrow.now() - lap_time).seconds/60} minutes.")
+    log(f"Start Time: {(arrow.now() - lap_time).seconds//60}:{(arrow.now() - lap_time).seconds%60} minutes.")
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5,
                                                         stratify=y)
     log('Train/Test Split')
-    log(f"Time: {(arrow.now() - lap_time).seconds/60} minutes.")
+    log(f"Start Time: {(arrow.now() - lap_time).seconds//60}:{(arrow.now() - lap_time).seconds%60} minutes.")
     pipe_baseline = pipe([
         ('base', DummyClassifier())
     ])
@@ -178,15 +177,15 @@ if __name__ == '__main__':
     pipe_dict = {0:'Baseline Dummy Classifier', 1:'Pass: Gaussian Na\u00EFve Bayes',
                  2: 'Bernoulli Na\u00EFve Bayes', 3: 'Multinomial Na\u00EFve Bayes'}
     log('Performing Train & Tests...')
-    log(f"Time: {(arrow.now() - lap_time).seconds/60} minutes.")
+    log(f"Start Time: {(arrow.now() - lap_time).seconds/60} minutes.")
     for idx, pip in enumerate(pipes):
         log(f'\nWorking on {pipe_dict[idx]}')
-        log(f"Time: {(arrow.now() - lap_time).seconds/60} minutes.")
+        log(f"Start Time: {(arrow.now() - lap_time).seconds/60} minutes.")
         log(f'Starting train {pipe_dict[idx]}')
         pip.fit(X_train, y_train)
-        log(f"Time: {(arrow.now() - lap_time).seconds/60} minutes.")
+        log(f"Start Time: {(arrow.now() - lap_time).seconds/60} minutes.")
         log(f'Starting Predict {pipe_dict[idx]}')
         log(metrics.classification_report(pip.predict(X_test), y_test))
-        log(f"Time: {(arrow.now() - lap_time).seconds/60} minutes.")
+        log(f"Start Time: {(arrow.now() - lap_time).seconds/60} minutes.")
         log('End')
 

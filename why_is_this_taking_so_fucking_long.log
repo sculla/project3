@@ -133,6 +133,7 @@ Received from PSQL server
 Time: 0.31666666666666665 minutes.
 In DataFrame
 Time: 0.5833333333333334 minutes.
+<<<<<<< Updated upstream
 Filled NA
 Time: 1.1833333333333333 minutes.
 Got Dummies
@@ -183,3 +184,9 @@ End
 Working on Bernoulli Naïve Bayes
 Time: 29.516666666666666 minutes.
 Starting train Bernoulli Naïve Bayes
+=======
+Start Time: 0:0 minutes.
+Starting 10mm rows:
+Received from PSQL server
+Start Time: 7:8 minutes.
+>>>>>>> Stashed changes
