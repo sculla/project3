@@ -28,11 +28,25 @@ import os
 from os import path
 import datetime
 
+
+def get_unique_path(column):
+    if path.exists(f'data/distinct_{column}.csv'):
+        return f'data/distinct_{column}.csv'
+    cursor = get_cursor()
+    cursor.execute(f'select distinct {column} from project3.phone_data;\n')
+    table = cursor.fetchall()
+    with open(f'data/distinct_{column}.csv', 'w+') as f:
+        for row in table:
+            f.write(f'{row[0]}\n')
+    return f'data/distinct_{column}.csv'
+
+
 def log(message):
-    f = open('why_is_this_taking_so_fucking_long.log', 'a')
-    f.write(message+'\n')
+    f = open('mvp.log', 'a')
+    f.write(message + '\n')
     print(message)
     f.close()
+
 
 def local_cur():
     tab = 'project3.phone_data_sample'
@@ -42,8 +56,8 @@ def local_cur():
     cursor = conn.connection.cursor()
     return cursor
 
-def get_cursor():
 
+def get_cursor():
     awsqlKey = dotenv.get_key('.env', 'awsqlKey')
 
     from psycopg2 import connect
@@ -58,13 +72,19 @@ def get_cursor():
 
     connection = connect(**params, dbname='sculla')
     connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-    #connection_string = 'postgresql://localhost:5432/sculla'
-    #engine = create_engine(connection_string, echo=True, isolation_level='AUTOCOMMIT')
+    # connection_string = 'postgresql://localhost:5432/sculla'
+    # engine = create_engine(connection_string, echo=True, isolation_level='AUTOCOMMIT')
     # conn = engine.connect()
     # cursor = conn.connection.cursor()
     cursor = connection.cursor()
-    cursor.execute('SET search_path TO project3;') # for console afterwards
+    cursor.execute('SET search_path TO project3;')  # for console afterwards
     return cursor
+
+def inner_tool(col):
+    path = get_unique_path(col)
+    with open(path, 'r') as f:
+        tabel = f.readlines()
+    return (x.replace('\n','') for x in tabel)
 
 
 def run_csv():
@@ -78,29 +98,32 @@ def run_csv():
             continue
         lap_time = arrow.now()
         log(f'{file} = start')
-        log(f"Start Time: {(arrow.now() - lap_time).seconds//60}:{(arrow.now() - lap_time).seconds%60} minutes.")
-        df = pd.read_csv(f'{file}', parse_dates=True,low_memory=False,
+        log(f"Start Time: {(arrow.now() - lap_time).seconds // 60}:{(arrow.now() - lap_time).seconds % 60} minutes.")
+        df = pd.read_csv(f'{file}',
                          names=['ip', 'app', 'device', 'os',
-                                'channel', 'click_time', 'attributed_time',
-                                'is_attributed']
-                         # dtype={'ip': ,
-                         #        'app': int,
-                         #        'device': int,
-                         #        'os': int,
-                         #        'channel': int,
-                         #        'is_attributed': int}
+                                'channel', 'click_time',
+                                'attributed_time','is_attributed'],
+                                parse_dates=['click_time']
                          )
+        df['hour'] = df['click_time'].apply(lambda t: t.hour)
+        df.drop(['attributed_time', 'click_time', 'ip'], axis=1, inplace=True)
         df.fillna(0, inplace=True)
-        df = pd.get_dummies(df, columns=['app', 'device', 'os', 'channel'])
+        #dummies implementation outside of the local file
+        for col in ['app', 'device', 'os','channel']:
+            val_gen_obj = inner_tool(col)
+            while True:
+                try:
+                    val = next(val_gen_obj)
+                    df[f'{col}_{val}'] = (df[col] == int(val)).astype('int')
+                except StopIteration:
+                    break
+
         df.to_csv(f'new_{file}')
-        log(f"End Time: {(arrow.now() - lap_time).seconds//60}:{(arrow.now() - lap_time).seconds%60} minutes.")
+        log(f"End Time: {(arrow.now() - lap_time).seconds // 60}:{(arrow.now() - lap_time).seconds % 60} minutes.")
         log(f'{file} = done')
 
-
 def feature_eng(cursor):
-
-
-    #cursor.execute(f'alter table {tab} add column time_since_click_sec int;\n')
+    # cursor.execute(f'alter table {tab} add column time_since_click_sec int;\n')
 
     cursor.execute(f'SELECT * FROM {tab} limit 100000;')
     table = cursor.fetchall()
@@ -133,13 +156,12 @@ def feature_eng(cursor):
     #
     #         d[df[2][idx]]= val #update dictionary to new time
     #         log(tab_index in d)
-    ['index', 'app', 'ip', 'device', 'os', 'channel', 'click_time', 'attributed_time', 'is_attributed']
+    #['index', 'app', 'ip', 'device', 'os', 'channel', 'click_time', 'attributed_time', 'is_attributed']
 
     # cursor.execute(f'SELECT * FROM {tab} limit 100000;')
     # table = cursor.fetchall()
     # df = pd.DataFrame(table)
-    #0, index 6, click time 7, attr time, 8, is attr -- not yet features
-
+    # 0, index 6, click time 7, attr time, 8, is attr -- not yet features
 
     X_train, X_testval, y_train, y_testval = model_selection.train_test_split(
         X,
@@ -158,6 +180,9 @@ def feature_eng(cursor):
     y_pred = logreg.predict(X_val)
 
     log(metrics.classification_report(y_val, y_pred))
+
+
+
 
 if __name__ == '__main__':
     run_csv()

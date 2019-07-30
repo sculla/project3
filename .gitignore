@@ -4,3 +4,7 @@ data/
 .idea/*
 .idea/workspace.xml__pycache__*
 __pycache__/
+why_is_this_taking_so_fucking_long.log
+/test.py
+/Untitled.ipynb
+.ipynb*
