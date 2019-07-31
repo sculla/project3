@@ -117,8 +117,10 @@ def run_csv():
                     df[f'{col}_{val}'] = (df[col] == int(val)).astype('int')
                 except StopIteration:
                     break
-
-        df.to_csv(f'new_{file}')
+        hours = [x for x in range(24)]
+        for h in hours:
+            df[f'{h}'] = (df['hour'] == h).astype('int')
+        df.to_csv(f'new_{file}', index=False)
         log(f"End Time: {(arrow.now() - lap_time).seconds // 60}:{(arrow.now() - lap_time).seconds % 60} minutes.")
         log(f'{file} = done')
 
@@ -183,6 +185,17 @@ def feature_eng(cursor):
 
 
 
+def load_models()
+    model_names = ["lr_model", "nb_model", "knn_model", "svc_model", "rf_model", "et_model", "ada_model"]
+
+    for model_name in model_names:
+        with open(f"models/{model_name}.pickle", "rb") as pfile:
+            exec(f"{model_name} = pickle.load(pfile)")
+
+    model_vars = [eval(n) for n in model_names]
+    model_list = list(zip(model_names, model_vars))
+    'http: // localhost: 8888 / notebooks / curriculum / project - 03 / ensembling / Ensemble_Methods.ipynb''
+    'https://scikit-cuda.readthedocs.io/en/latest/'
 
 if __name__ == '__main__':
     run_csv()
