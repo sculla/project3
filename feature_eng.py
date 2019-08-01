@@ -2,11 +2,12 @@
 import pandas as pd
 
 
+
 columns = ['ip', 'app', 'device', 'os', 'channel', 'click_time', 'attributed_time', 'is_attributed']
 
 
 def load_csv():
-    x = pd.read_csv('data/train.csv', skiprows=1, names=columns)
+    x = pd.read_csv('data/xaa.csv', skiprows=1, names=columns)
     return x.drop(columns=['attributed_time'])
 
 def tc():
@@ -39,11 +40,26 @@ def dl():
     y.to_csv(f'data/ip_{name}.csv')
 
 if __name__ == '__main__':
-    print('start')
+    main = load_csv()
+    name = 'total_clicks'
+    tc = pd.read_csv(f'data/ip_{name}.csv')
+    main = main.merge(tc, how='left', on='ip')
+    del tc
+    print('done1')
 
-    print('mid')
-    c_s()
-    print('done')
-
+    name = 'total_downloads'
+    dl = pd.read_csv(f'data/ip_{name}.csv')
+    print('loaded, and merging'
+    main = main.merge(dl, how='left', on='ip')
+    del dl
+    print('done2')
+    main.to_csv('new_train.csv')
+    c_s = pd.read_csv(f'data/main.csv', low_memory=False)
+    print('loaded, and merging')
+    main = main.merge(c_s, how='left', on=['ip','click_time'])
+    del c_s
+    print('done3')
+    main.to_csv('new_train.csv')
+    print('done4')
 
 
