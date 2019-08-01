@@ -14,3 +14,12 @@ unique IP 277396
 
 MVP sample should grab by ip for time delta
 so i dont have to worry about grabbing different IPs
+
+
+# notes for imporvement
+IP address features (can be applied to app, device, channel, etc.):
+- clicks/minute
+- total clicks
+- percent_downloads
+
+

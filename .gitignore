@@ -8,3 +8,5 @@ why_is_this_taking_so_fucking_long.log
 /test.py
 /Untitled.ipynb
 .ipynb*
+pairs
+.DS_S*
