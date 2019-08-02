@@ -3,6 +3,35 @@ import pandas as pd
 from sklearn import metrics
 from sklearn.ensemble import GradientBoostingClassifier
 import datetime
+from sqlalchemy import create_engine
+import dotenv
+from psycopg2 import connect
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+from psycopg2 import ProgrammingError
+
+
+def get_cursor():
+
+    awsqlKey = dotenv.get_key('.env', 'awsqlKey')
+
+
+
+    params = {
+        'host': 'project3.czq1askywdkq.us-west-2.rds.amazonaws.com',
+        'user': 'sculla',
+        'password': awsqlKey,
+        'port': 5432
+    }
+
+    connection = connect(**params, dbname='sculla')
+    connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+    #connion_string = 'postgresql://localhost:5432/sculla'
+    #engine = create_engine(connion_string, echo=True, isolation_level='AUTOCOMMIT')
+    # cursor = engine.conn()
+    # cursor = cursor.connion.cursor()
+    cursor = connection.cursor()
+    cursor.execute('SET search_path TO project3;') # for console afterwards
+    return cursor
 
 
 columns = ['ip', 'app', 'device', 'os', 'channel', 'click_time', 'attributed_time', 'is_attributed']
@@ -74,33 +103,58 @@ def test():
     gbc = GradientBoostingClassifier(max_depth=50, verbose=1, tol=1e-7, random_state=42, subsample=1, n_estimators=1000)
 
 
-
+import pickle
+import os
 if __name__ == '__main__':
+    cursor = get_cursor()
+    dt ={'ip': int,
+         'app': int,
+         'device': int,
+         'os': int,
+         'channel': int,
+         'attributed_time': str,
+         'is_attributed': int}
+    #df = pd.read_csv('data/test/train.csv', names=columns, low_memory=False)
     columns = ['ip', 'app', 'device', 'os', 'channel', 'click_time', 'attributed_time', 'is_attributed']
-    df = pd.read_csv('data/train.csv', names=columns)
-    main = pd.read_csv('data/train.csv', skiprows=1, names=columns, dtype=
-                    dict(zip(['ip', 'app', 'device', 'os', 'channel', 'attributed_time', 'is_attributed'],
-                             [int, int, int, int, int, str, int])))
-    col = ['ip','app', 'device', 'os', 'channel']
-    for idx, column in enumerate(col):
-        print(column)
-        name = f'attr_clicks_{column}'
-        main_grouped = main.groupby(by=[column, 'is_attributed']).count()
-        print(column, 'grouped')
-        main_grouped = main_grouped.reset_index()
-        main_grouped = main_grouped.rename(columns={'click_time': f'{name}'})
-        print(column, 'renamed')
-        main_grouped = main_grouped[[f'{column}',f'{name}']]
-        print('loaded, and merging')
 
-        df = df.merge(main_grouped,how='left', on=column)
-        try:
-            df = df.drop(['Unnamed: 0'], axis=1)
-        except:
-            pass
+    for skip_num in range(37):
+        skip = 1 + skip_num * 5e6
 
-        print('output')
-    df.to_csv(f'new_train.csv')
+
+        col = ['app', 'device', 'os', 'channel']
+        main = pd.read_csv('data/test/train.csv', names=columns, low_memory=False, skiprows=int(skip), nrows=5e6)
+        for idx, column in enumerate(col):
+            if not os.path.exists(f'sql_{column}.pkl'):
+                cursor.execute(f'select {column},is_attributed, count(is_attributed) from project3.phone_data where is_attributed = 1 group by {column}, is_attributed;\n')
+                table = cursor.fetchall()
+                with open(f'sql_{column}.pkl', 'wb') as f:
+                    pickle.dump(table, f)
+            else:
+                with open(f'sql_{column}.pkl', 'rb') as f:
+                    table = pickle.load(f)
+
+
+            print(column)
+            name = f'attr_clicks_{column}'
+            main_grouped = pd.DataFrame(table, columns=[column, 'is_attributed', name])  #df.groupby(by=[column, 'is_attributed']).count()    #table, names=[col, 'is_attributed', 'is_attributed_count'])
+            del table
+            print(column, 'grouped')
+            main_grouped = main_grouped.reset_index()
+            main_grouped = main_grouped.rename(columns={'click_time': f'{name}'})
+            print(column, 'renamed')
+            main_grouped = main_grouped[[f'{column}',f'{name}']]
+            print('loaded, and merging')
+
+            main = main.merge(main_grouped,how='left', on=column)
+            try:
+                main = main.drop(['Unnamed: 0'], axis=1)
+            except:
+                pass
+
+            print('output')
+        print('weeee')
+        main.to_csv(f'{skip_num}_new.csv', index=False)
+        del main
 
 
 

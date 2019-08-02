@@ -158,7 +158,7 @@ def feature_eng(cursor):
     #
     #         d[df[2][idx]]= val #update dictionary to new time
     #         log(tab_index in d)
-    #['index', 'app', 'ip', 'device', 'os', 'channel', 'click_time', 'attributed_time', 'is_attributed']
+
 
     # cursor.execute(f'SELECT * FROM {tab} limit 100000;')
     # table = cursor.fetchall()
