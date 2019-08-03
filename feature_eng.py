@@ -92,6 +92,7 @@ def dl():
 
 
 def gbc_test():
+
     # imp_dtype = {'ip': int,
     #              'app': int,
     #              'device': int,
@@ -112,17 +113,22 @@ def gbc_test():
         main['is_attributed']
     )
     print('split')
-    gbc = GradientBoostingClassifier(max_depth=10,
-                                     verbose=3,
-                                     tol=1e-6,
-                                     random_state=42,
-                                     subsample=1,
-                                     n_estimators=15)
-    gbc.fit(X_train, y_train)
-    print('metrics')
-    print(metrics.classification_report(y_test, gbc.predict(X_test)))
-    with open('gbc_model_50mm_2.pkl', 'wb') as f:
-        pickle.dump(gbc, f)
+    fet = 'None sqrt log2'.split()
+    for idx, fig in enumerate(['exponential','deviance']):
+        gbc = GradientBoostingClassifier(max_depth=7,
+                                         loss=fig,
+                                         max_features=feat,
+                                         verbose=3,
+                                         tol=1e-6,
+                                         random_state=42,
+                                         subsample=1,
+                                         n_estimators=10)
+
+        gbc.fit(X_train, y_train)
+        print('metrics',fig)
+        print(metrics.classification_report(y_test, gbc.predict(X_test)))
+        with open(f'gbc_model_50mm_{idx}-{fig}.pkl', 'wb') as f:
+            pickle.dump(gbc, f)
 
 
 def first_layer():
