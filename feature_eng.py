@@ -110,7 +110,8 @@ def gbc_test():
     print('loaded')
     X_train, X_test, y_train, y_test = train_test_split(
         main.drop(['click_time', 'is_attributed'], axis=1),
-        main['is_attributed']
+        main['is_attributed'],
+        random_state=42
     )
     print('split')
     fet = 'None sqrt log2'.split()
