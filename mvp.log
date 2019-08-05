@@ -80,3 +80,30 @@ data/test.csv = start
 Start Time: 0:0 minutes.
 End Time: 0:5 minutes.
 test.csv = done
+Start Time: 0:59 minutes.
+Start Time: 0:59 minutes.
+Start Time: 1:38 minutes.
+Start Time: 0:58 minutes.
+Start Time: 0:58 minutes.
+Start Time: 1:43 minutes.
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00  24934384
+           1       0.12      0.01      0.02     65616
+
+    accuracy                           1.00  25000000
+   macro avg       0.56      0.50      0.51  25000000
+weighted avg       1.00      1.00      1.00  25000000
+
+Start Time: 0:58 minutes.
+Start Time: 0:58 minutes.
+Start Time: 1:42 minutes.
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00  24934384
+           1       0.12      0.01      0.02     65616
+
+    accuracy                           1.00  25000000
+   macro avg       0.56      0.50      0.51  25000000
+weighted avg       1.00      1.00      1.00  25000000
+
