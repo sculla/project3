@@ -91,48 +91,7 @@ def dl():
 
 
 
-def gbc_test():
-
-    # imp_dtype = {'ip': int,
-    #              'app': int,
-    #              'device': int,
-    #              'os': int,
-    #              'channel': int,
-    #              'is_attributed': int,
-    #              'attr_clicks_app': int,
-    #              'attr_clicks_device': int,
-    #              'attr_clicks_os': float,
-    #              'attr_clicks_channel': int}
-    print('starting')
-    main = pd.read_csv('0_new_clicks.csv', header=0, low_memory=False)
-    main.drop(['attributed_time'], axis=1, inplace=True)
-    main.fillna(0, axis=1, inplace=True)
-    print('loaded')
-    X_train, X_test, y_train, y_test = train_test_split(
-        main.drop(['click_time', 'is_attributed'], axis=1),
-        main['is_attributed'],
-        random_state=42
-    )
-    print('split')
-    fet = 'None sqrt log2'.split()
-    for idx, fig in enumerate(['exponential','deviance']):
-        gbc = GradientBoostingClassifier(max_depth=7,
-                                         loss=fig,
-                                         max_features=feat,
-                                         verbose=3,
-                                         tol=1e-6,
-                                         random_state=42,
-                                         subsample=1,
-                                         n_estimators=10)
-
-        gbc.fit(X_train, y_train)
-        print('metrics',fig)
-        print(metrics.classification_report(y_test, gbc.predict(X_test)))
-        with open(f'gbc_model_50mm_{idx}-{fig}.pkl', 'wb') as f:
-            pickle.dump(gbc, f)
-
-
-def first_layer():
+def first_layer(path):
     cursor = get_cursor()
     dt = {'ip': int,
           'app': int,
@@ -145,12 +104,13 @@ def first_layer():
 
     columns = ['ip', 'app', 'device', 'os', 'channel', 'click_time', 'attributed_time', 'is_attributed']
 
-    for skip_num in range(37):
-        skip = 1 + skip_num * 5e6
+    for skip_num in range(1):
+        # skip = 1 + skip_num * 5e6
 
         col = ['app', 'device', 'os', 'channel']
-        main = pd.read_csv('data/test/train.csv', names=columns,
-                           low_memory=False, skiprows=int(skip), nrows=5e6)
+        main = pd.read_csv(path, header=0, #names=columns,
+                           low_memory=False,
+                           dtype=dict(zip(col,[int]*4)))# skiprows=int(skip), nrows=5e6)
         for idx, column in enumerate(col):
             if not os.path.exists(f'sql_{column}.pkl'):
                 cursor.execute(
@@ -181,30 +141,27 @@ def first_layer():
                 pass
 
             print('output')
-        print('weeee')
-        main.to_csv(f'{skip_num}_new.csv', index=False)
-        del main
+        print('weeee1')
+        # main.to_csv(f'data/submission/test-mid.csv', index=False)
+        cursor.close()
+        return main
 
 
-def second_layer():
+def second_layer(datatable=None, load_new=False, csv_name=None, path=None):
     cursor = get_cursor()
-    dt = {'ip': int,
-          'app': int,
-          'device': int,
-          'os': int,
-          'channel': int,
-          'attributed_time': str,
-          'is_attributed': int}
-    # df = pd.read_csv('data/test/train.csv', names=columns, low_memory=False)
+
 
     columns = ['ip', 'app', 'device', 'os', 'channel', 'click_time', 'attributed_time', 'is_attributed']
 
-
-
     col = ['app', 'device', 'os', 'channel']
-    main = pd.read_csv('data/0_new.csv',
+    if load_new:
+        print('starting')
+        datatable = pd.read_csv(f'{path}',
                        low_memory=False,
                        dtype=dict(zip(col,[int]*4)))#, nrows=5e6)
+    main=datatable
+
+
     for idx, column in enumerate(col):
         if not os.path.exists(f'sql_{column}_click.pkl'):
             cursor.execute(
@@ -235,11 +192,145 @@ def second_layer():
             pass
 
         print('output')
-    print('weeee')
-    main.to_csv(f'0_new_clicks.csv', index=False)
-    del main
+    print('weeee2')
+    main.to_csv(f'data/test/1-{csv_name}', index=False)
+    cursor.close()
+    return main
+
+
+def vc():
+    # gbc_test(load_new=True)
+    #gbc_test(datatable=second_layer(datatable=first_layer()))
+    from sklearn.ensemble import VotingClassifier
+    from sklearn.preprocessing import LabelEncoder
+    print('starting')
+    main = pd.read_csv('data/submission/test-worked.csv', header=0, low_memory=False)
+    main.fillna(0, axis=1, inplace=True)
+
+    with open('gbc_training_i36.pkl', 'rb') as f:
+        gbc_36 = pickle.load(f)
+    estimators = ('gbc_36', gbc_36)
+
+    vc = VotingClassifier(estimators, voting='soft', n_jobs=-1)
+    vc.estimators_ = [gbc_36]
+
+    X, y = main.drop(['click_id', 'click_time'], axis=1), main['click_id']
+
+    print('split')
+    #vc.fit(X_train, y_train)
+
+    y = pd.DataFrame(y)
+    print('predicting')
+    y['is_attributed'] = gbc_36.predict(X)
+
+    y.to_csv('data/submission/submission-test.csv')
+    return y
+    # print(metrics.classification_report(y_test, vc.predict(X_test)))
+    # with open(f'gbc_voting.pkl', 'wb') as f:
+    #     pickle.dump(vc, f)
+
+def gbc_test(datatable=None, load_new=False):
+
+    # imp_dtype = {'ip': int,
+    #              'app': int,
+    #              'device': int,
+    #              'os': int,
+    #              'channel': int,
+    #              'is_attributed': int,
+    #              'attr_clicks_app': int,
+    #              'attr_clicks_device': int,
+    #              'attr_clicks_os': float,
+    #              'attr_clicks_channel': int}
+    if load_new:
+        print('starting')
+        datatable = pd.read_csv(f'{path}', header=0, low_memory=False)
+    main=datatable
+    main.drop(['attributed_time'], axis=1, inplace=True)
+    main.fillna(0, axis=1, inplace=True)
+    print('loaded')
+    for idx in range(36,50):
+        X_train, X_test, y_train, y_test = train_test_split(
+            main.drop(['click_time', 'is_attributed'], axis=1),
+            main['is_attributed'],
+            #random_state=42
+        )
+        print('split')
+        gbc = GradientBoostingClassifier(max_depth=4,
+                                         loss='deviance',
+                                         max_features='sqrt',
+                                         verbose=3,
+                                         tol=1e-6,
+                                         #random_state=42,
+                                         subsample=1,
+                                         n_estimators=20)
+
+        gbc.fit(X_train, y_train)
+        print('metrics',idx)
+        print(metrics.classification_report(y_test, gbc.predict(X_test)))
+        with open(f'gbc_training_i{idx}.pkl', 'wb') as f:
+            pickle.dump(gbc, f)
+    # TODO add bits for the voting classifier
+    # vc = VotingClassifier(vote='soft')
+    # vc.estimators_ = pickled models
 
 
 if __name__ == '__main__':
+    # gbc_test(load_new=True)
+    li = ['data/test/1-0_test_new.csv', 'data/test/1-1_test_new.csv',
+          'data/test/1-2_test_new.csv']
+    gbc = GradientBoostingClassifier(max_depth=7,
+                                     loss='deviance',
+                                     max_features='sqrt',
+                                     verbose=3,
+                                     tol=1e-6,
+                                     # random_state=42,
+                                     subsample=1,
+                                     n_estimators=20,
+                                     warm_start=True)
+    for idx, csv in enumerate(li):
+        main = pd.read_csv(f'{csv}', header=0, low_memory=False)
+        main.drop(['attributed_time'], axis=1, inplace=True)
+        main.fillna(0, axis=1, inplace=True)
+        print(f'loaded {csv}')
+        X_train, y_train = main.drop(['click_time', 'is_attributed'], axis=1),\
+                           main['is_attributed']
+        del main
+        print(f'split {csv}')
+        gbc.fit(X_train, y_train)
+        print(f'trained {csv}')
+        with open(f'data/test/gbc_testing_i{idx}.pkl', 'wb') as f:
+            pickle.dump(gbc, f)
+        del X_train, y_train
 
-    gbc_test()
+    main = pd.read_csv(f'data/test/1-3_test_new.csv', header=0, low_memory=False)
+    main.drop(['attributed_time'], axis=1, inplace=True)
+    main.fillna(0, axis=1, inplace=True)
+    print('loaded')
+    X_test, y_test = main.drop(['click_time', 'is_attributed'], axis=1), \
+                       main['is_attributed']
+    del main
+    print(metrics.classification_report(y_test, gbc.predict(X_test)))
+
+    from xgboost import XGBClassifier
+    ####################
+    model_params = {
+        'verbosity':3,
+        'n_jobs':-1,
+    }
+    model = XGBClassifier(**model_params)
+    del X_test, y_test
+    main = pd.read_csv(f'data/test/1-0_test_new.csv', header=0, low_memory=False)
+    main.drop(['attributed_time'], axis=1, inplace=True)
+    main.fillna(0, axis=1, inplace=True)
+    X_train, y_train = main.drop(['click_time', 'is_attributed'], axis=1), \
+                       main['is_attributed']
+    del main
+    model.fit(X_train, y_train)
+    del X_train, y_train
+    main = pd.read_csv(f'data/test/1-1_test_new.csv', header=0, low_memory=False)
+    main.drop(['attributed_time'], axis=1, inplace=True)
+    main.fillna(0, axis=1, inplace=True)
+    X_test, y_test = main.drop(['click_time', 'is_attributed'], axis=1), \
+                       main['is_attributed']
+    del main
+    print(metrics.classification_report(y_test, model.predict(X_test)))
