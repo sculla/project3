@@ -91,7 +91,94 @@ def dl():
 
 
 
-def first_layer(path):
+def gbc_test():
+
+    # imp_dtype = {'ip': int,
+    #              'app': int,
+    #              'device': int,
+    #              'os': int,
+    #              'channel': int,
+    #              'is_attributed': int,
+    #              'attr_clicks_app': int,
+    #              'attr_clicks_device': int,
+    #              'attr_clicks_os': float,
+    #              'attr_clicks_channel': int}
+    print('starting')
+    main = pd.read_csv('0_new_clicks.csv', header=0, low_memory=False)
+    main.drop(['attributed_time'], axis=1, inplace=True)
+    main.fillna(0, axis=1, inplace=True)
+    print('loaded')
+    X_train, X_test, y_train, y_test = train_test_split(
+        main.drop(['click_time', 'is_attributed'], axis=1),
+        main['is_attributed'],
+        random_state=42
+    )
+    print('split')
+    fet = 'None sqrt log2'.split()
+    for idx, fig in enumerate(['exponential','deviance']):
+        gbc = GradientBoostingClassifier(max_depth=7,
+                                         loss=fig,
+                                         max_features=feat,
+                                         verbose=3,
+                                         tol=1e-6,
+                                         random_state=42,
+                                         subsample=1,
+                                         n_estimators=10)
+
+        gbc.fit(X_train, y_train)
+        print('metrics',fig)
+        print(metrics.classification_report(y_test, gbc.predict(X_test)))
+        with open(f'gbc_model_50mm_{idx}-{fig}.pkl', 'wb') as f:
+            pickle.dump(gbc, f)
+
+def prep_layer():
+    cursor = get_cursor()
+    # x = load_csv()
+    # name = 'clicks_sec'
+    # y = x.groupby(by=['ip', 'click_time']).count()
+    # y = y.reset_index()
+    # y = y.rename(columns={'channel': f'{name}'})
+    # y = y[['ip', 'click_time', f'{name}']]
+    # y.to_csv(f'data/ip_{name}.csv', index=False)
+    col = ['app', 'device', 'os', 'channel']
+    main = pd.read_csv('data/train.csv', names=columns,
+                       low_memory=False, skiprows=1, nrows=5e7, parse_dates=True)
+    for idx, column in enumerate(col):
+        if not os.path.exists(f'sql_{column}_click_time.pkl'):
+            cursor.execute(
+                f'select {column}, click_time, count(is_attributed) from project3.phone_data where is_attributed = 1 group by {column}, click_time;\n')
+            table = cursor.fetchall()
+            with open(f'sql_{column}_click_time.pkl', 'wb') as f:
+                pickle.dump(table, f)
+        else:
+            with open(f'sql_{column}_click_time.pkl', 'rb') as f:
+                table = pickle.load(f)
+            continue
+            print(column)
+            name = f'{column}_click_time'
+            main_grouped = pd.DataFrame(table, columns=[column, 'click_time',
+                                                        name], )  # df.groupby(by=[column, 'is_attributed']).count()    #table, names=[col, 'is_attributed', 'is_attributed_count'])
+
+            print(column, 'grouped')
+
+            del table
+            print('loaded, and merging')
+
+            main = main.merge(main_grouped, how='left', on=[column,'click_time'])
+            try:
+                main = main.drop(['Unnamed: 0'], axis=1)
+            except KeyError:
+                pass
+
+            print('output')
+        print('weeee')
+        main.to_csv(f'0_train_8_5.csv', index=False)
+        return main
+
+
+def first_layer(df=False):
+    if df == False:
+        raise 'ffs pass in a data frame'
     cursor = get_cursor()
     dt = {'ip': int,
           'app': int,
@@ -103,14 +190,16 @@ def first_layer(path):
     # df = pd.read_csv('data/test/train.csv', names=columns, low_memory=False)
 
     columns = ['ip', 'app', 'device', 'os', 'channel', 'click_time', 'attributed_time', 'is_attributed']
-
-    for skip_num in range(1):
-        # skip = 1 + skip_num * 5e6
+    main = df
+    for skip_num in range(1): #range(37):
+        skip = 1 + skip_num * 5e6
 
         col = ['app', 'device', 'os', 'channel']
-        main = pd.read_csv(path, header=0, #names=columns,
-                           low_memory=False,
-                           dtype=dict(zip(col,[int]*4)))# skiprows=int(skip), nrows=5e6)
+        if df == 1:
+            main = pd.read_csv('0_train_8_5.csv', names=columns,
+                               low_memory=False) #, skiprows=int(skip), nrows=5e6)
+        else:
+            pass
         for idx, column in enumerate(col):
             if not os.path.exists(f'sql_{column}.pkl'):
                 cursor.execute(
@@ -141,27 +230,27 @@ def first_layer(path):
                 pass
 
             print('output')
-        print('weeee1')
-        # main.to_csv(f'data/submission/test-mid.csv', index=False)
-        cursor.close()
+        print('weeee')
+        main.to_csv(f'1_train_8_5.csv.csv', index=False)
         return main
 
 
-def second_layer(datatable=None, load_new=False, csv_name=None, path=None):
+def second_layer(df=False):
     cursor = get_cursor()
 
 
     columns = ['ip', 'app', 'device', 'os', 'channel', 'click_time', 'attributed_time', 'is_attributed']
 
+
+    if df == False:
+        raise 'ffs pass in a data frame'
+        # main = pd.read_csv('2_train_8_5.csv',
+        #                    low_memory=False,
+        #                    dtype=dict(zip(col, [int] * 4)))  # , nrows=5e6)
+    else:
+        pass
     col = ['app', 'device', 'os', 'channel']
-    if load_new:
-        print('starting')
-        datatable = pd.read_csv(f'{path}',
-                       low_memory=False,
-                       dtype=dict(zip(col,[int]*4)))#, nrows=5e6)
-    main=datatable
-
-
+    main = df
     for idx, column in enumerate(col):
         if not os.path.exists(f'sql_{column}_click.pkl'):
             cursor.execute(
@@ -192,10 +281,9 @@ def second_layer(datatable=None, load_new=False, csv_name=None, path=None):
             pass
 
         print('output')
-    print('weeee2')
-    main.to_csv(f'data/test/1-{csv_name}', index=False)
-    cursor.close()
-    return main
+    print('weeee')
+    main.to_csv(f'2_new_clicks.csv', index=False)
+    del main
 
 
 def vc():
